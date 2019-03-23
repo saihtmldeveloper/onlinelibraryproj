@@ -1,0 +1,30 @@
+create table admin (id varchar2(3) constraint admin_id_pk primary key,name varchar2(20),password varchar2(8));
+
+
+create table books (bid varchar2(3)  constraint pk_bid_books primary key,bname varchar2(30),author varchar2(20),cost number);
+
+
+create table customer (cid varchar2(3) primary key,cname varchar2(30),mobno number);
+
+
+
+create table transaction (tid varchar2(10),type varchar2(3),bid varchar2(3), foreign key(bid) references books(bid),cid varchar2(3), foreign key(cid) references customer(cid),time date);
+
+create table custaudit (cid varchar2(3),noofbooks number);
+
+
+--TRIGGER FOR MAINTAINING CUSTOMER BOOKS DETAILS 
+
+create or replace trigger trig_custaudit 
+before
+insert or delete on customer 
+for each row 
+begin
+if inserting then 
+insert into custaudit values(:new.cid,0);
+end if;
+if deleting then 
+delete from custaudit where cid = :old.cid;
+end if;
+end ;
+/
